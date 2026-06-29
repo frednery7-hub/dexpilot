@@ -25,3 +25,7 @@ local.properties
 # DEX files are ignored by default, except reviewed fixtures
 *.dex
 !src/test/resources/fixtures/**/*.dex
+
+# Generated local reports
+report.json
+reports/

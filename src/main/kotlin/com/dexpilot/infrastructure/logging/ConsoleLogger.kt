@@ -4,7 +4,7 @@ import com.dexpilot.application.ports.LoggerPort
 
 class ConsoleLogger : LoggerPort {
     override fun info(event: String, message: String) {
-        println("INFO  $event $message")
+        System.err.println("INFO  $event $message")
     }
 
     override fun warn(event: String, message: String) {

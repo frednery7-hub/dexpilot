@@ -6,9 +6,11 @@ import com.dexpilot.domain.dex.validation.DexHeaderValidator
 import com.dexpilot.infrastructure.dex.DexHeaderParser
 import com.dexpilot.infrastructure.dex.FileDexBinaryReader
 import com.dexpilot.infrastructure.logging.ConsoleLogger
+import com.dexpilot.infrastructure.report.JsonReportWriter
 import com.dexpilot.infrastructure.report.TextReportWriter
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import java.nio.file.Path
 import java.util.concurrent.Callable
@@ -40,7 +42,10 @@ class HeaderCommand : Callable<Int> {
     @Parameters(index = "0", description = ["Path to the .dex file."])
     lateinit var dexPath: Path
 
-    override fun call(): Int = runAnalysis(dexPath)
+    @Option(names = ["--json"], description = ["Print the report as JSON."])
+    var json: Boolean = false
+
+    override fun call(): Int = runAnalysis(dexPath, json)
 }
 
 @Command(
@@ -52,10 +57,13 @@ class AnalyzeCommand : Callable<Int> {
     @Parameters(index = "0", description = ["Path to the .dex file."])
     lateinit var dexPath: Path
 
-    override fun call(): Int = runAnalysis(dexPath)
+    @Option(names = ["--json"], description = ["Print the report as JSON."])
+    var json: Boolean = false
+
+    override fun call(): Int = runAnalysis(dexPath, json)
 }
 
-private fun runAnalysis(path: Path): Int {
+private fun runAnalysis(path: Path, json: Boolean): Int {
     val useCase = AnalyzeDexUseCase(
         reader = FileDexBinaryReader(),
         parser = DexHeaderParser(),
@@ -65,7 +73,13 @@ private fun runAnalysis(path: Path): Int {
 
     return when (val result = useCase.execute(path)) {
         is DexAnalysisResult.Completed -> {
-            println(TextReportWriter().write(result.summary))
+            val output = if (json) {
+                JsonReportWriter().write(result.summary)
+            } else {
+                TextReportWriter().write(result.summary)
+            }
+
+            println(output)
             if (result.summary.validation.isValid) 0 else 2
         }
         is DexAnalysisResult.Failed -> {

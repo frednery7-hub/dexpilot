@@ -13,7 +13,7 @@ class TextReportWriter {
             appendLine("File: ${summary.path}")
             appendLine("Status: ${validation.status}")
             appendLine()
-            appendLine("Magic: ${header.magicText.toDisplayMagic()}")
+            appendLine("Magic: ${ReportEscaper.displayMagic(header.magicText)}")
             appendLine("Version: ${header.version}")
             appendLine("File size declared: ${header.fileSize} bytes")
             appendLine("File size actual: ${summary.actualFileSize} bytes")
@@ -36,9 +36,4 @@ class TextReportWriter {
             }
         }
     }
-
-    private fun String.toDisplayMagic(): String =
-        this.replace("\\u0000", "\\0")
-            .replace("\n", "\\n")
-            .replace("\u0000", "\\0")
 }
