@@ -46,6 +46,16 @@ class TextReportWriter {
                 }
             }
 
+            summary.typeSummary?.let { typeSummary ->
+                appendLine()
+                appendLine("Types:")
+                appendLine("Declared types: ${typeSummary.declaredCount}")
+                appendLine("Sample size: ${typeSummary.sample.size}")
+                typeSummary.sample.forEach { item ->
+                    appendLine("- #${item.index} descriptor_idx=${item.descriptorIndex}: ${item.descriptor}")
+                }
+            }
+
             if (validation.errors.isNotEmpty()) {
                 appendLine()
                 appendLine("Validation errors:")

@@ -2,13 +2,13 @@
 
 DexPilot is an experimental Kotlin/JVM command-line tool for inspecting Android DEX files.
 
-The current v0.2.0 scope extends the original MVP 1 header inspector with controlled parsing of DEX `map_list`, `string_ids`, and bounded `string_data_item` samples.
+The current v0.3.0 scope extends the original MVP 1 header inspector with controlled parsing of DEX `map_list`, `string_ids`, bounded `string_data_item` samples, and `type_ids` resolved into type descriptors.
 
 DexPilot is not a DEX optimizer, bytecode rewriter, shrinker, obfuscator, deobfuscator, APK repackager, Gradle plugin, or bytecode execution tool.
 
 ## Current status
 
-Current release line: v0.2.0 — Map List + String IDs.
+Current release line: v0.3.0 — Type IDs + Type Names.
 
 Implemented:
 
@@ -22,6 +22,8 @@ Implemented:
 - `string_ids` parser.
 - Bounded ULEB128 decoder for string data.
 - Safe sample extraction from `string_data_item`.
+- `type_ids` parser.
+- Type descriptor resolution through `string_ids`.
 - Text report output.
 - JSON report output through `--json`.
 - Minimal logging through `LoggerPort`.
@@ -35,6 +37,7 @@ Controlled fixtures:
 - `minimal-header.dex`
 - `minimal-map-list.dex`
 - `minimal-string-ids.dex`
+- `minimal-type-ids.dex`
 
 ## Requirements
 
@@ -65,15 +68,15 @@ Inspect a DEX header:
 
 Analyze a DEX file:
 
-    ./gradlew run --args="analyze src/test/resources/fixtures/valid/minimal-string-ids.dex"
+    ./gradlew run --args="analyze src/test/resources/fixtures/valid/minimal-type-ids.dex"
 
 Generate JSON report:
 
-    ./gradlew run --args="analyze --json src/test/resources/fixtures/valid/minimal-string-ids.dex"
+    ./gradlew run --args="analyze --json src/test/resources/fixtures/valid/minimal-type-ids.dex"
 
 Generate clean JSON into a file:
 
-    ./gradlew -q run --args="analyze --json src/test/resources/fixtures/valid/minimal-string-ids.dex" > report.json
+    ./gradlew -q run --args="analyze --json src/test/resources/fixtures/valid/minimal-type-ids.dex" > report.json
 
 Validate generated JSON locally:
 
@@ -106,6 +109,8 @@ DexPilot currently validates:
 - `string_ids` range boundaries.
 - `string_data_off` file bounds.
 - ULEB128 decoding with a fixed safety limit.
+- `type_ids` range boundaries.
+- `type_id.descriptor_idx` references against `string_ids_size`.
 
 DexPilot does not validate full DEX semantic correctness, checksum correctness, SHA-1 signature correctness, class definitions, method bodies, bytecode instructions, control-flow graphs, call graphs, or APK-level integrity.
 
@@ -165,6 +170,7 @@ Commits are created only after each stage audit passes.
 
 - v0.1.0: MVP 1 DEX header inspector.
 - v0.2.0: Map List + String IDs.
+- v0.3.0: Type IDs + Type Names.
 
 ## License
 
