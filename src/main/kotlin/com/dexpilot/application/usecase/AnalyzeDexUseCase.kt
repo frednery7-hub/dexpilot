@@ -4,14 +4,18 @@ import com.dexpilot.application.ports.DexBinaryReader
 import com.dexpilot.application.ports.LoggerPort
 import com.dexpilot.domain.dex.validation.DexHeaderValidator
 import com.dexpilot.infrastructure.dex.DexHeaderParser
+import com.dexpilot.infrastructure.dex.DexMapListParser
 import com.dexpilot.infrastructure.dex.DexParseException
+import com.dexpilot.infrastructure.dex.DexStringIdsParser
 import java.nio.file.Path
 
 class AnalyzeDexUseCase(
     private val reader: DexBinaryReader,
     private val parser: DexHeaderParser,
     private val validator: DexHeaderValidator,
-    private val logger: LoggerPort
+    private val logger: LoggerPort,
+    private val mapListParser: DexMapListParser = DexMapListParser(),
+    private val stringIdsParser: DexStringIdsParser = DexStringIdsParser()
 ) {
     fun execute(path: Path): DexAnalysisResult {
         return try {
@@ -23,12 +27,25 @@ class AnalyzeDexUseCase(
             logger.info("DEX_HEADER_PARSED", "version=${header.version}")
             val validation = validator.validate(header, actualFileSize = bytes.size.toLong())
             logger.info("DEX_VALIDATION_COMPLETED", "status=${validation.status}")
+
+            val mapList = mapListParser.parse(bytes, header.mapOff)
+            logger.info("DEX_MAP_LIST_PARSED", "items=${mapList?.items?.size ?: 0}")
+
+            val stringSummary = stringIdsParser.parse(
+                bytes = bytes,
+                stringIdsSize = header.stringIdsSize,
+                stringIdsOff = header.stringIdsOff
+            )
+            logger.info("DEX_STRING_IDS_PARSED", "sample=${stringSummary?.sample?.size ?: 0}")
+
             DexAnalysisResult.Completed(
                 DexFileSummary(
                     path = path.toString(),
                     actualFileSize = bytes.size.toLong(),
                     header = header,
-                    validation = validation
+                    validation = validation,
+                    mapList = mapList,
+                    stringSummary = stringSummary
                 )
             )
         } catch (error: DexParseException) {

@@ -27,6 +27,25 @@ class TextReportWriter {
             appendLine("Method IDs: ${header.methodIdsSize}")
             appendLine("Class Definitions: ${header.classDefsSize}")
 
+            summary.mapList?.let { mapList ->
+                appendLine()
+                appendLine("Map List:")
+                appendLine("Declared items: ${mapList.declaredSize}")
+                mapList.items.forEach { item ->
+                    appendLine("- ${item.typeName}: size=${item.size}, offset=${item.offset}")
+                }
+            }
+
+            summary.stringSummary?.let { stringSummary ->
+                appendLine()
+                appendLine("Strings:")
+                appendLine("Declared strings: ${stringSummary.declaredCount}")
+                appendLine("Sample size: ${stringSummary.sample.size}")
+                stringSummary.sample.forEach { item ->
+                    appendLine("- #${item.index} @${item.offset}: ${item.value}")
+                }
+            }
+
             if (validation.errors.isNotEmpty()) {
                 appendLine()
                 appendLine("Validation errors:")
