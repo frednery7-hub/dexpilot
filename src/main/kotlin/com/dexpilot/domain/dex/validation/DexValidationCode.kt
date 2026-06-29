@@ -1,0 +1,11 @@
+package com.dexpilot.domain.dex.validation
+
+enum class DexValidationCode {
+    INVALID_MAGIC,
+    UNSUPPORTED_DEX_VERSION,
+    UNSUPPORTED_EXPERIMENTAL_DEX_VERSION,
+    INVALID_FILE_SIZE,
+    INVALID_HEADER_SIZE,
+    INVALID_ENDIAN_TAG,
+    INVALID_OFFSET_RANGE
+}
