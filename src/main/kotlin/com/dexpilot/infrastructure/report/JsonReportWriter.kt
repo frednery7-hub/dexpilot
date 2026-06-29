@@ -42,6 +42,7 @@ class JsonReportWriter {
             appendLine("  },")
             appendLine("  \"mapList\": ${writeMapList(summary)},")
             appendLine("  \"stringSummary\": ${writeStringSummary(summary)},")
+            appendLine("  \"typeSummary\": ${writeTypeSummary(summary)},")
             appendLine("  \"validationErrors\": [")
             validation.errors.forEachIndexed { index, error ->
                 val suffix = if (index == validation.errors.lastIndex) "" else ","
@@ -77,6 +78,21 @@ class JsonReportWriter {
             stringSummary.sample.forEachIndexed { index, item ->
                 val suffix = if (index == stringSummary.sample.lastIndex) "" else ","
                 appendLine("      { \"index\": ${item.index}, \"offset\": ${item.offset}, \"declaredUtf16Size\": ${item.declaredUtf16Size}, \"value\": ${ReportEscaper.jsonString(item.value)} }$suffix")
+            }
+            append("    ]\n  }")
+        }
+    }
+
+    private fun writeTypeSummary(summary: DexFileSummary): String {
+        val typeSummary = summary.typeSummary ?: return "null"
+
+        return buildString {
+            appendLine("{")
+            appendLine("    \"declaredCount\": ${typeSummary.declaredCount},")
+            appendLine("    \"sample\": [")
+            typeSummary.sample.forEachIndexed { index, item ->
+                val suffix = if (index == typeSummary.sample.lastIndex) "" else ","
+                appendLine("      { \"index\": ${item.index}, \"descriptorIndex\": ${item.descriptorIndex}, \"descriptor\": ${ReportEscaper.jsonString(item.descriptor)} }$suffix")
             }
             append("    ]\n  }")
         }
