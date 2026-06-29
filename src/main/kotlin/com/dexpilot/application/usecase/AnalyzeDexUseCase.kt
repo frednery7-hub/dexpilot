@@ -7,6 +7,7 @@ import com.dexpilot.infrastructure.dex.DexHeaderParser
 import com.dexpilot.infrastructure.dex.DexMapListParser
 import com.dexpilot.infrastructure.dex.DexParseException
 import com.dexpilot.infrastructure.dex.DexStringIdsParser
+import com.dexpilot.infrastructure.dex.DexTypeIdsParser
 import java.nio.file.Path
 
 class AnalyzeDexUseCase(
@@ -15,7 +16,8 @@ class AnalyzeDexUseCase(
     private val validator: DexHeaderValidator,
     private val logger: LoggerPort,
     private val mapListParser: DexMapListParser = DexMapListParser(),
-    private val stringIdsParser: DexStringIdsParser = DexStringIdsParser()
+    private val stringIdsParser: DexStringIdsParser = DexStringIdsParser(),
+    private val typeIdsParser: DexTypeIdsParser = DexTypeIdsParser()
 ) {
     fun execute(path: Path): DexAnalysisResult {
         return try {
@@ -38,6 +40,15 @@ class AnalyzeDexUseCase(
             )
             logger.info("DEX_STRING_IDS_PARSED", "sample=${stringSummary?.sample?.size ?: 0}")
 
+            val typeSummary = typeIdsParser.parse(
+                bytes = bytes,
+                typeIdsSize = header.typeIdsSize,
+                typeIdsOff = header.typeIdsOff,
+                stringIdsSize = header.stringIdsSize,
+                stringSummary = stringSummary
+            )
+            logger.info("DEX_TYPE_IDS_PARSED", "sample=${typeSummary?.sample?.size ?: 0}")
+
             DexAnalysisResult.Completed(
                 DexFileSummary(
                     path = path.toString(),
@@ -45,7 +56,8 @@ class AnalyzeDexUseCase(
                     header = header,
                     validation = validation,
                     mapList = mapList,
-                    stringSummary = stringSummary
+                    stringSummary = stringSummary,
+                    typeSummary = typeSummary
                 )
             )
         } catch (error: DexParseException) {
