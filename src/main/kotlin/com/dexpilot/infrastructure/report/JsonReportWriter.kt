@@ -40,6 +40,7 @@ class JsonReportWriter {
             appendLine("    \"dataSize\": ${header.dataSize},")
             appendLine("    \"dataOff\": ${header.dataOff}")
             appendLine("  },")
+            appendLine("  \"mapList\": ${writeMapList(summary)},")
             appendLine("  \"validationErrors\": [")
             validation.errors.forEachIndexed { index, error ->
                 val suffix = if (index == validation.errors.lastIndex) "" else ","
@@ -47,6 +48,21 @@ class JsonReportWriter {
             }
             appendLine("  ]")
             appendLine("}")
+        }
+    }
+
+    private fun writeMapList(summary: DexFileSummary): String {
+        val mapList = summary.mapList ?: return "null"
+
+        return buildString {
+            appendLine("{")
+            appendLine("    \"declaredSize\": ${mapList.declaredSize},")
+            appendLine("    \"items\": [")
+            mapList.items.forEachIndexed { index, item ->
+                val suffix = if (index == mapList.items.lastIndex) "" else ","
+                appendLine("      { \"typeCode\": ${item.typeCode}, \"typeName\": ${ReportEscaper.jsonString(item.typeName)}, \"size\": ${item.size}, \"offset\": ${item.offset} }$suffix")
+            }
+            append("    ]\n  }")
         }
     }
 }

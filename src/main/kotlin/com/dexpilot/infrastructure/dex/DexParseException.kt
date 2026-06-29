@@ -1,7 +1,8 @@
 package com.dexpilot.infrastructure.dex
 
 enum class DexParseErrorCode {
-    FILE_TOO_SMALL
+    FILE_TOO_SMALL,
+    INVALID_MAP_LIST
 }
 
 class DexParseException(

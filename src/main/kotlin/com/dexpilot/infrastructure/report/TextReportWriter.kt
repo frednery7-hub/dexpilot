@@ -27,6 +27,15 @@ class TextReportWriter {
             appendLine("Method IDs: ${header.methodIdsSize}")
             appendLine("Class Definitions: ${header.classDefsSize}")
 
+            summary.mapList?.let { mapList ->
+                appendLine()
+                appendLine("Map List:")
+                appendLine("Declared items: ${mapList.declaredSize}")
+                mapList.items.forEach { item ->
+                    appendLine("- ${item.typeName}: size=${item.size}, offset=${item.offset}")
+                }
+            }
+
             if (validation.errors.isNotEmpty()) {
                 appendLine()
                 appendLine("Validation errors:")
