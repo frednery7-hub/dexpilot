@@ -41,6 +41,7 @@ class JsonReportWriter {
             appendLine("    \"dataOff\": ${header.dataOff}")
             appendLine("  },")
             appendLine("  \"mapList\": ${writeMapList(summary)},")
+            appendLine("  \"stringSummary\": ${writeStringSummary(summary)},")
             appendLine("  \"validationErrors\": [")
             validation.errors.forEachIndexed { index, error ->
                 val suffix = if (index == validation.errors.lastIndex) "" else ","
@@ -61,6 +62,21 @@ class JsonReportWriter {
             mapList.items.forEachIndexed { index, item ->
                 val suffix = if (index == mapList.items.lastIndex) "" else ","
                 appendLine("      { \"typeCode\": ${item.typeCode}, \"typeName\": ${ReportEscaper.jsonString(item.typeName)}, \"size\": ${item.size}, \"offset\": ${item.offset} }$suffix")
+            }
+            append("    ]\n  }")
+        }
+    }
+
+    private fun writeStringSummary(summary: DexFileSummary): String {
+        val stringSummary = summary.stringSummary ?: return "null"
+
+        return buildString {
+            appendLine("{")
+            appendLine("    \"declaredCount\": ${stringSummary.declaredCount},")
+            appendLine("    \"sample\": [")
+            stringSummary.sample.forEachIndexed { index, item ->
+                val suffix = if (index == stringSummary.sample.lastIndex) "" else ","
+                appendLine("      { \"index\": ${item.index}, \"offset\": ${item.offset}, \"declaredUtf16Size\": ${item.declaredUtf16Size}, \"value\": ${ReportEscaper.jsonString(item.value)} }$suffix")
             }
             append("    ]\n  }")
         }
