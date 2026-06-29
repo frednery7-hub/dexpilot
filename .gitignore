@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# IntelliJ
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Local environment files
+.env
+.env.*
+local.properties
+
+# Generated Android artifacts
+*.apk
+*.aab
+
+# DEX files are ignored by default, except reviewed fixtures
+*.dex
+!src/test/resources/fixtures/**/*.dex
