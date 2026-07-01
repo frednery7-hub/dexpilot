@@ -175,3 +175,17 @@ Commits are created only after each stage audit passes.
 ## License
 
 Proprietary / source-available during early development.
+
+## Applied portfolio use cases
+
+DexPilot is designed as a defensive Android DEX inspection tool.
+
+In the broader portfolio, it complements mobile applications such as Movia and Vaultia by providing a read-only inspection layer for Android artifacts generated during build and release workflows.
+
+- Movia demonstrates applied mobile product engineering.
+- Vaultia demonstrates privacy-first and security-first mobile architecture.
+- DexPilot demonstrates Android DEX artifact inspection.
+
+See:
+
+- `docs/use-cases/MOBILE_ARTIFACT_INSPECTION_PORTFOLIO.md`
