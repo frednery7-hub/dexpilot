@@ -4,7 +4,8 @@ enum class DexParseErrorCode {
     FILE_TOO_SMALL,
     INVALID_MAP_LIST,
     INVALID_STRING_IDS,
-    INVALID_TYPE_IDS
+    INVALID_TYPE_IDS,
+    INVALID_PROTO_IDS,
 }
 
 class DexParseException(

@@ -6,6 +6,7 @@ import com.dexpilot.domain.dex.validation.DexHeaderValidator
 import com.dexpilot.infrastructure.dex.DexHeaderParser
 import com.dexpilot.infrastructure.dex.DexMapListParser
 import com.dexpilot.infrastructure.dex.DexParseException
+import com.dexpilot.infrastructure.dex.DexProtoIdsParser
 import com.dexpilot.infrastructure.dex.DexStringIdsParser
 import com.dexpilot.infrastructure.dex.DexTypeIdsParser
 import java.nio.file.Path
@@ -17,7 +18,8 @@ class AnalyzeDexUseCase(
     private val logger: LoggerPort,
     private val mapListParser: DexMapListParser = DexMapListParser(),
     private val stringIdsParser: DexStringIdsParser = DexStringIdsParser(),
-    private val typeIdsParser: DexTypeIdsParser = DexTypeIdsParser()
+    private val typeIdsParser: DexTypeIdsParser = DexTypeIdsParser(),
+    private val protoIdsParser: DexProtoIdsParser = DexProtoIdsParser(),
 ) {
     fun execute(path: Path): DexAnalysisResult {
         return try {
@@ -36,7 +38,7 @@ class AnalyzeDexUseCase(
             val stringSummary = stringIdsParser.parse(
                 bytes = bytes,
                 stringIdsSize = header.stringIdsSize,
-                stringIdsOff = header.stringIdsOff
+                stringIdsOff = header.stringIdsOff,
             )
             logger.info("DEX_STRING_IDS_PARSED", "sample=${stringSummary?.sample?.size ?: 0}")
 
@@ -45,9 +47,17 @@ class AnalyzeDexUseCase(
                 typeIdsSize = header.typeIdsSize,
                 typeIdsOff = header.typeIdsOff,
                 stringIdsSize = header.stringIdsSize,
-                stringSummary = stringSummary
+                stringSummary = stringSummary,
             )
             logger.info("DEX_TYPE_IDS_PARSED", "sample=${typeSummary?.sample?.size ?: 0}")
+
+            val protoSummary = protoIdsParser.parse(
+                bytes = bytes,
+                header = header,
+                stringSummary = stringSummary,
+                typeSummary = typeSummary,
+            )
+            logger.info("DEX_PROTO_IDS_PARSED", "sample=${protoSummary.sample.size}")
 
             DexAnalysisResult.Completed(
                 DexFileSummary(
@@ -57,7 +67,8 @@ class AnalyzeDexUseCase(
                     validation = validation,
                     mapList = mapList,
                     stringSummary = stringSummary,
-                    typeSummary = typeSummary
+                    typeSummary = typeSummary,
+                    protoSummary = protoSummary,
                 )
             )
         } catch (error: DexParseException) {
