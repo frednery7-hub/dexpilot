@@ -5,7 +5,7 @@ import com.dexpilot.domain.dex.model.DexStringData
 import com.dexpilot.domain.dex.model.DexStringSummary
 import com.dexpilot.domain.dex.model.DexTypeData
 import com.dexpilot.domain.dex.model.DexTypeSummary
-import com.dexpilot.domain.dex.validation.DexValidationCode
+import com.dexpilot.infrastructure.dex.DexParseErrorCode
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -121,7 +121,7 @@ class DexProtoIdsParserTest {
         val ex = shouldThrow<DexParseException> {
             parser.parse(bytes, header, stringSummary = null, typeSummary = null)
         }
-        ex.code shouldBe DexValidationCode.INVALID_PROTO_IDS
+        ex.code shouldBe DexParseErrorCode.INVALID_PROTO_IDS
     }
 
     @Test
@@ -132,7 +132,7 @@ class DexProtoIdsParserTest {
         val ex = shouldThrow<DexParseException> {
             parser.parse(bytes, header, stringSummary = null, typeSummary = null)
         }
-        ex.code shouldBe DexValidationCode.INVALID_PROTO_IDS
+        ex.code shouldBe DexParseErrorCode.INVALID_PROTO_IDS
     }
 
     @Test
@@ -144,7 +144,7 @@ class DexProtoIdsParserTest {
         val ex = shouldThrow<DexParseException> {
             parser.parse(bytes, header, stringSummary = null, typeSummary = null)
         }
-        ex.code shouldBe DexValidationCode.INVALID_PROTO_IDS
+        ex.code shouldBe DexParseErrorCode.INVALID_PROTO_IDS
     }
 
     @Test
@@ -156,6 +156,6 @@ class DexProtoIdsParserTest {
         val ex = shouldThrow<DexParseException> {
             parser.parse(bytes, header, stringSummary = null, typeSummary = null)
         }
-        ex.code shouldBe DexValidationCode.INVALID_PROTO_IDS
+        ex.code shouldBe DexParseErrorCode.INVALID_PROTO_IDS
     }
 }

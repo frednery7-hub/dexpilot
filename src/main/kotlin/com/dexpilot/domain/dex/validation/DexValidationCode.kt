@@ -8,5 +8,4 @@ enum class DexValidationCode {
     INVALID_HEADER_SIZE,
     INVALID_ENDIAN_TAG,
     INVALID_OFFSET_RANGE,
-    INVALID_PROTO_IDS,
 }

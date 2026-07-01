@@ -5,7 +5,6 @@ import com.dexpilot.domain.dex.model.DexProtoData
 import com.dexpilot.domain.dex.model.DexProtoSummary
 import com.dexpilot.domain.dex.model.DexStringSummary
 import com.dexpilot.domain.dex.model.DexTypeSummary
-import com.dexpilot.domain.dex.validation.DexValidationCode
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -30,7 +29,7 @@ class DexProtoIdsParser {
 
         if (off <= 0 || off >= bytes.size) {
             throw DexParseException(
-                code = DexValidationCode.INVALID_PROTO_IDS,
+                code = DexParseErrorCode.INVALID_PROTO_IDS,
                 message = "proto_ids_off=$off fora dos limites do arquivo (size=${bytes.size})",
             )
         }
@@ -38,7 +37,7 @@ class DexProtoIdsParser {
         val tableEnd = off.toLong() + declaredCount.toLong() * PROTO_ID_ITEM_SIZE
         if (tableEnd > bytes.size) {
             throw DexParseException(
-                code = DexValidationCode.INVALID_PROTO_IDS,
+                code = DexParseErrorCode.INVALID_PROTO_IDS,
                 message = "proto_ids tabela excede o arquivo: off=$off count=$declaredCount",
             )
         }
@@ -48,21 +47,21 @@ class DexProtoIdsParser {
         val sample = mutableListOf<DexProtoData>()
 
         for (i in 0 until sampleSize) {
-            val itemOff    = off + i * PROTO_ID_ITEM_SIZE
-            val shortyIdx      = buf.getInt(itemOff)
-            val returnTypeIdx  = buf.getInt(itemOff + 4)
-            val parametersOff  = buf.getInt(itemOff + 8)
+            val itemOff       = off + i * PROTO_ID_ITEM_SIZE
+            val shortyIdx     = buf.getInt(itemOff)
+            val returnTypeIdx = buf.getInt(itemOff + 4)
+            val parametersOff = buf.getInt(itemOff + 8)
 
             if (shortyIdx < 0 || shortyIdx >= header.stringIdsSize.toInt()) {
                 throw DexParseException(
-                    code = DexValidationCode.INVALID_PROTO_IDS,
+                    code = DexParseErrorCode.INVALID_PROTO_IDS,
                     message = "proto[$i].shorty_idx=$shortyIdx fora do range de string_ids (size=${header.stringIdsSize})",
                 )
             }
 
             if (returnTypeIdx < 0 || returnTypeIdx >= header.typeIdsSize.toInt()) {
                 throw DexParseException(
-                    code = DexValidationCode.INVALID_PROTO_IDS,
+                    code = DexParseErrorCode.INVALID_PROTO_IDS,
                     message = "proto[$i].return_type_idx=$returnTypeIdx fora do range de type_ids (size=${header.typeIdsSize})",
                 )
             }
