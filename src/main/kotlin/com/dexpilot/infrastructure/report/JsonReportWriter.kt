@@ -43,6 +43,7 @@ class JsonReportWriter {
             appendLine("  \"mapList\": ${writeMapList(summary)},")
             appendLine("  \"stringSummary\": ${writeStringSummary(summary)},")
             appendLine("  \"typeSummary\": ${writeTypeSummary(summary)},")
+            appendLine("  \"protoSummary\": ${writeProtoSummary(summary)},")
             appendLine("  \"validationErrors\": [")
             validation.errors.forEachIndexed { index, error ->
                 val suffix = if (index == validation.errors.lastIndex) "" else ","
@@ -55,7 +56,6 @@ class JsonReportWriter {
 
     private fun writeMapList(summary: DexFileSummary): String {
         val mapList = summary.mapList ?: return "null"
-
         return buildString {
             appendLine("{")
             appendLine("    \"declaredSize\": ${mapList.declaredSize},")
@@ -70,7 +70,6 @@ class JsonReportWriter {
 
     private fun writeStringSummary(summary: DexFileSummary): String {
         val stringSummary = summary.stringSummary ?: return "null"
-
         return buildString {
             appendLine("{")
             appendLine("    \"declaredCount\": ${stringSummary.declaredCount},")
@@ -85,7 +84,6 @@ class JsonReportWriter {
 
     private fun writeTypeSummary(summary: DexFileSummary): String {
         val typeSummary = summary.typeSummary ?: return "null"
-
         return buildString {
             appendLine("{")
             appendLine("    \"declaredCount\": ${typeSummary.declaredCount},")
@@ -93,6 +91,20 @@ class JsonReportWriter {
             typeSummary.sample.forEachIndexed { index, item ->
                 val suffix = if (index == typeSummary.sample.lastIndex) "" else ","
                 appendLine("      { \"index\": ${item.index}, \"descriptorIndex\": ${item.descriptorIndex}, \"descriptor\": ${ReportEscaper.jsonString(item.descriptor)} }$suffix")
+            }
+            append("    ]\n  }")
+        }
+    }
+
+    private fun writeProtoSummary(summary: DexFileSummary): String {
+        val protoSummary = summary.protoSummary ?: return "null"
+        return buildString {
+            appendLine("{")
+            appendLine("    \"declaredCount\": ${protoSummary.declaredCount},")
+            appendLine("    \"sample\": [")
+            protoSummary.sample.forEachIndexed { index, item ->
+                val suffix = if (index == protoSummary.sample.lastIndex) "" else ","
+                appendLine("      { \"index\": ${item.index}, \"shortyIndex\": ${item.shortyIndex}, \"shortyDescriptor\": ${ReportEscaper.jsonString(item.shortyDescriptor ?: "")}, \"returnTypeIndex\": ${item.returnTypeIndex}, \"returnTypeDescriptor\": ${ReportEscaper.jsonString(item.returnTypeDescriptor ?: "")}, \"parametersOffset\": ${item.parametersOffset} }$suffix")
             }
             append("    ]\n  }")
         }

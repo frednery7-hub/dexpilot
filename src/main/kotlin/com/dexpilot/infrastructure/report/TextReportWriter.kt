@@ -56,6 +56,16 @@ class TextReportWriter {
                 }
             }
 
+            summary.protoSummary?.let { protoSummary ->
+                appendLine()
+                appendLine("Protos:")
+                appendLine("Declared protos: ${protoSummary.declaredCount}")
+                appendLine("Sample size: ${protoSummary.sample.size}")
+                protoSummary.sample.forEach { item ->
+                    appendLine("- #${item.index} shorty=${item.shortyDescriptor} return=${item.returnTypeDescriptor} params_off=${item.parametersOffset}")
+                }
+            }
+
             if (validation.errors.isNotEmpty()) {
                 appendLine()
                 appendLine("Validation errors:")
